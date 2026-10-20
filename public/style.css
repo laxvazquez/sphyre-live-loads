@@ -10,3 +10,13 @@
 /* Casos de carga variables */
 [hidden]{display:none!important}
 #case-select{font-weight:700;color:#f1d29a}#hs20-spacing-field{border-left:3px solid #b99a63;padding-left:12px}
+
+/* v1.2: esquemas técnicos de cargas para móvil y escritorio */
+.schematic-panel{margin:0 0 28px;padding:14px 12px;min-width:0;border:1px solid #66583f;border-radius:12px;background:linear-gradient(155deg,#242528,#14191f)}
+.schematic-head{display:flex;flex-wrap:wrap;gap:6px;justify-content:space-between;align-items:center;margin:0 2px 12px;font-size:11px;font-weight:700;letter-spacing:.11em;color:#eac78e}
+.schematic-head small{font-size:11px;letter-spacing:0;font-weight:400;color:#c5cbd0}
+.schematic-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-color:#ae915c #1c232a;background:#10151b;border:1px solid #37404b;border-radius:8px}
+.schematic-scroll svg{display:block;min-width:790px;width:100%;height:auto}
+.schematic-scroll:focus-visible{outline:2px solid #e4be77;outline-offset:3px}
+.schematic-foot{font-size:11px;line-height:1.55;color:#bac2cb;margin:9px 2px 0}
+@media(max-width:640px){.schematic-panel{padding:11px 7px}.schematic-scroll svg{min-width:790px}}
