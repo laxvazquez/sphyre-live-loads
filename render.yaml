@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: sphyre-live-loads
+    runtime: static
+    buildCommand: echo "Sphyre Live Loads - frontend listo"
+    staticPublishPath: ./public
+    autoDeployTrigger: commit
