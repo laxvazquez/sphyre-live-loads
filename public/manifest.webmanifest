@@ -1,0 +1,30 @@
+{
+  "name": "Sphyre Live Loads — Bridge Lab",
+  "short_name": "Sphyre Loads",
+  "description": "Simulador de momentos y cortantes máximos bajo carga móvil IMT 66.5.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b0e12",
+  "theme_color": "#111419",
+  "icons": [
+    {
+      "src": "./icons/sphyre-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/sphyre-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/sphyre.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
