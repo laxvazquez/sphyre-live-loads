@@ -6,3 +6,7 @@
 
 /* Prevent intrinsic SVG/chart width from expanding the mobile viewport. */
 .workspace>*{min-width:0}.sidebar,.content,.viewer-panel,.chart-panel{min-width:0}@media(max-width:750px){.workspace{grid-template-columns:minmax(0,1fr)}.content{overflow:hidden}.viewer-scroll{max-width:100%}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.metric-value strong{font-size:clamp(17px,6vw,25px)}}
+
+/* Casos de carga variables */
+[hidden]{display:none!important}
+#case-select{font-weight:700;color:#f1d29a}#hs20-spacing-field{border-left:3px solid #b99a63;padding-left:12px}
