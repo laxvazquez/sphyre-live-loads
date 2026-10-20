@@ -1,7 +1,7 @@
 {
   "name": "Sphyre Live Loads — Bridge Lab",
   "short_name": "Sphyre Loads",
-  "description": "Simulador de momentos y cortantes máximos bajo carga móvil IMT 66.5.",
+  "description": "Simulador web de cargas móviles IMT 66.5, HS-20, Cooper E-50 y E-80.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
