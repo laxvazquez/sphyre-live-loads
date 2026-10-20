@@ -17,6 +17,34 @@ function cache(){try{localStorage.setItem('sphyre-live-loads-v1',JSON.stringify(
 function model(){return vehicleModel(state.L,state.reversed,state.caseId,state.hs20SpacingFt)}
 function current(){return evaluateAt(configuration(state.L,state.shift,state.loadFactor,state.reduction,state.reversed,state.caseId,state.hs20SpacingFt),state.x)}
 const pos=(x,L)=>92+816*x/L;
+function loadSchematicSVG(m){
+ const rail=m.category==='rail',lane=m.caseId===CASES.HS20_M||m.caseId===CASES.HS20_V;
+ const W=rail?1440:930,H=218,edge=44;
+ const nominal=(a)=>number(a.force,rail?1:2),ft=rail||m.caseId===CASES.HS20;
+ const left=rail&&m.trailing?.side==='left'?-11:0;
+ const right=Math.max(m.length+(rail&&m.trailing?.side==='right'?11:0),lane?Math.min(state.L,45):m.length+1,1);
+ const xp=z=>edge+(W-2*edge)*(z-left)/(right-left);
+ let parts='<rect width="'+W+'" height="'+H+'" fill="#10151b"/><line x1="32" y1="150" x2="'+(W-32)+'" y2="150" stroke="#8495a4" stroke-width="4"/>';
+ if(m.w){
+   const a=rail?(m.trailing?.side==='left'?left:m.length):0,b=rail?(m.trailing?.side==='left'?0:right):right;
+   const x1=xp(a),x2=xp(b);
+   parts+='<rect x="'+Math.min(x1,x2)+'" y="91" width="'+Math.abs(x2-x1)+'" height="38" fill="#bda16d" fill-opacity=".17"/>';
+   for(let i=0;i<16;i++){const x=x1+(x2-x1)*(i+.5)/16;parts+='<path d="M'+x+' 89 v34 l-4 -7 m4 7 l4 -7" stroke="#e4bc80" fill="none"/>'}
+   parts+='<text x="'+((x1+x2)/2)+'" y="77" font-size="15" fill="#ebc788" text-anchor="middle">w = '+number(m.w,2)+' tf/m</text>';
+ }
+ for(let i=0;i<m.axles.length;i++){
+   const axle=m.axles[i],x=xp(axle.offset);
+   parts+='<path d="M'+x+' 73 v55 m-5 -9 l5 9 l5 -9" stroke="#f3c87e" stroke-width="2.3" fill="none"/><circle cx="'+x+'" cy="150" r="5" fill="#f1c581"/>';
+   parts+='<text x="'+x+'" y="'+(i%2?52:34)+'" text-anchor="middle" font-size="'+(rail?11:14)+'" fill="#ffe0a5" font-weight="700">'+nominal(axle)+'</text>';
+   if(i){const x0=xp(m.axles[i-1].offset),mid=(x0+x)/2,dy=rail?(i%2?204:185):196;
+     parts+='<path d="M'+x0+' '+(dy-10)+' v16 M'+x+' '+(dy-10)+' v16 M'+x0+' '+(dy-6)+' H'+x+'" stroke="#899cab" fill="none"/><text x="'+mid+'" y="'+(dy+11)+'" text-anchor="middle" font-size="'+(rail?10:13)+'" fill="#d0d8df">'+number((axle.offset-m.axles[i-1].offset)/(ft?FT:1),rail?0:2)+'</text>';
+   }
+ }
+ $('schematic-units').textContent='P nominal en tf · distancias en '+(ft?'ft':'m');
+ $('schematic-foot').textContent=rail?'Cooper: dos locomotoras y cola uniforme móvil. Valores por vía completa; verifica AREMA.':lane?'Carga de carril: fuerza puntual más carga distribuida; alternativa al camión HS-20.':'Cargas por eje y separaciones. Desliza para ver el esquema completo.';
+ const svg=$('load-schematic');svg.setAttribute('viewBox','0 0 '+W+' '+H);svg.style.minWidth=rail?'1200px':'790px';
+ return parts;
+}
 function bridgeSVG(q, m){
   const L=state.L,S=816/L,x=p=>pos(p,L), x0=92,x1=908;
   let ticks='',wheels='',loads='',loadLabels='';
@@ -96,6 +124,7 @@ function updateView(){
   const c=state.critical;
   $('model-name').textContent=m.label;
   $('model-description').textContent=m.description;
+  $('load-schematic').innerHTML=loadSchematicSVG(m);
   $('model-forces').textContent=m.category==='rail'?'P = '+[.5,1,.65].map(f=>number((m.caseId==='e80'?80:50)*KIP*f,2)).join(' / ')+' tf (piloto / motriz / ténder)': 'P = '+m.axles.map(a=>number(a.force,2)).join(' / ')+' tf';
   $('model-w').textContent=`w = ${number(m.w*state.reduction,3)} tf/m`;
   $('metric-m').textContent=number(c.moment.value);$('metric-m-x').textContent=`x = ${number(c.moment.x)} m · móvil = ${number(c.moment.shift)} m`;
