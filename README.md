@@ -1,54 +1,35 @@
-# SPHYRE LIVE LOADS · Bridge Lab (v1.0)
+# SPHYRE LIVE LOADS · Bridge Lab (v1.1)
 
-Simulador web móvil para análisis **longitudinal** bajo cargas móviles virtuales IMT 66.5, utilizando un modelo **simplemente apoyado**. Sitio estático (HTML/CSS/JS módulos ECMAScript); no requiere servidores ni dependencias de producción.
+Actualización de los modelos de carga viva móvil en una viga simplemente apoyada. Disponible en modalidad **web estática**; sin backend ni costos de cómputo de servidor.
 
-## Funcionalidades
+## Modelos
 
-- Modelo IMT 66.5 según **N-PRY-CAR-6-01-003/25, E.1.2.1**.
-  - `L < 30 m`: fuerzas `[5, 12, 12, 12.5, 12.5, 12.5] tf`, distancias al primer eje `[0,4.4,5.6,12.8,14,15.2] m`, sin carga uniforme.
-  - `L >= 30 m`: fuerzas `[5,24,37.5] tf`, distancias `[0,5,14] m` y carga `w(L) = min(1, (L-30)/60) tf/m` aplicada en el claro completo.
-- Reducción 0.90 del modelo para carretera Tipo C, configurable; un factor separado opcional sobre cargas concentradas P (valor 1.33 **ilustrativo**, NO preseleccionado ni automáticamente normativo).
-- Modelo de viga simple: reacciones RA y RB y diagramas de M(x), V(x).
-- Optimizador de posición del modelo móvil que devuelve M máximo global y V máximo absoluto global, con posición del primer eje y coordenada crítica de la trabe.
-- Dos controles deslizantes, reproducción animada, sentido reversible, simulación SVG de trabe AASHTO y camión **ilustrativo** (los modelos IMT son cargas virtuales).
-- Exportación CSV de diagramas (valores para la posición actual) y máximos móviles; PWA instalable con caché offline.
+- IMT 66.5 (<30m / >=30m): se preservó el motor previo.
+- HS-20-44: ejes 8 / 32 / 32 kip, primer intervalo 14 ft y segundo intervalo 14–30 ft configurable. **La búsqueda de máximo se hace para la separación elegida, NO para la envolvente automática del rango completo.**
+- HS-20 carril: ALTERNATIVA al camión según AASHTO Standard Specs; 0.64 kip/ft y carga puntual de 18 kip (momento) o 26 kip (cortante). No sumar camión + carril como se hace en HL-93.
+- Cooper E-50 / E-80: dos locomotoras ficticias, 18 cargas de ejes y cola uniforme longitudinal **que se desplaza con las locomotoras** (E80 = 8 kip/ft, E50 = 5 kip/ft). Se incluyen ambos sentidos de circulación.
 
-## Reproducción local
+## Uso
 
-```shell
-cd sphyre-live-loads
-npm test
-python -m http.server 8080 -d public
-```
+Abrir `public/index.html` mediante un servidor local (por módulos ES) o desplegar como static site de Render con `publishPath=public` y `buildCommand=echo listo`.
 
-Abrir http://localhost:8080. Para probar en celular usar un servidor HTTPS o desplegar en Render. No abrir `index.html` con `file://` porque importa módulos ES.
+Cálculo de reacciones RA/RB, diagramas de M/V, barrido de desplazamientos y exportación CSV.
+Unidades: tonf, m. Conversiones: 1 kip = 0.45359237 tf, 1 ft = 0.3048 m.
 
-## Publicar en Render (vía GitHub)
+## Alcances
 
-1. Crear un repositorio nuevo en GitHub, por ejemplo `sphyre-live-loads`. Subir todo el contenido de esta carpeta al directorio raíz del repositorio; `render.yaml` debe quedar visible en la raíz.
-2. En Render, elegir **New > Blueprint** y seleccionar ese repositorio. Confirmar el servicio estático `sphyre-live-loads` y aplicar. Render usa automáticamente el archivo `render.yaml`.
-3. Alternativa: **New > Static Site**, seleccionar repositorio, Build command: `echo "Sphyre Live Loads - frontend listo"`, Publish directory: `public`, branch: `main`.
-4. Esperar estado **Live** y verificar URL asignada `https://...onrender.com`, abrir en móvil, mover el vehículo y comprobar indicadores y exportación CSV.
-5. Nuevas versiones: actualizar `main`; `autoDeployTrigger: commit` activa el despliegue automático.
+Motor **longitudinal** en viga simplemente apoyada. Resultados NOMINALES sin factores de carga, sin distribución transversal, sin espectro de impacto, sin efectos dinámicos ferroviarios o frenado, sin cantidad de vías y sin combinaciones. El valor 1.33 es un multiplicador manual **solo de las cargas puntuales**; no se aplica por defecto y NO corresponde automáticamente al impacto ferroviario. La carga alternativa AREMA de 4 ejes debe comprobarse separadamente (NO está incluida en esta versión). Los valores de HS-20 camión se calculan para el intervalo de separación seleccionada; ensayar separación de 14 a 30 ft para obtener envolvente completa.
 
-La configuración de Render no requiere claves secretas ni base de datos. [Documentación de Render](https://render.com/docs/static-sites) · [Blueprint YAML](https://render.com/docs/blueprint-spec).
+## Referencias base
 
-## Limitaciones y alcance
+- AASHTO HS-20-44 en *Standard Specifications*; ver NCHRP Report 322 figura E-5 y E-6: https://onlinepubs.trb.org/Onlinepubs/nchrp/nchrp_rpt_322.pdf
+- WisDOT Bridge Manual, Chapter 38, figura 38.3-5 Cooper E80: https://wisconsindot.gov/dtsdManuals/strct/manuals/bridge/ch38.pdf
+- SICT N-PRY-CAR-6-01-003/25 para IMT 66.5.
 
-- **Versión de análisis longitudinal de una sola viga simplemente apoyada:** no modela continuidad, múltiples carriles simultáneos, distribución transversal, rigidez del tablero, esviaje, efectos de fatiga, deformaciones, combinaciones, efectos de impacto normativos automáticos ni verificación de capacidad resistente.
-- La carga uniforme está sobre **todo el claro** mientras se desplaza el vehículo, según el modelo longitudinal para la viga simple, y no cambia con la posición del primer eje.
-- El incremento de P con valor 1.33 se presenta solamente como una **opción manual ilustrativa**. El usuario debe corroborar los factores de carga y disposiciones vigentes que apliquen al proyecto, incluyendo factores de carriles.
-- **Las fuerzas de ejes y las separaciones representan un vehículo virtual normativo;** el camión dibujado es solo una representación pedagógica, no el vehículo con dimensiones físicas reales.
-- La posición del modelo móvil se define por el **primer eje listado**, que puede estar antes de la entrada al claro (posición negativa). Las cifras se calculan internamente con precisión doble; la interfaz redondea a 2 decimales.
-- La fuerza cortante se representa a derecha de cada eje concentrado (en el punto de carga hay salto); la envolvente |V| se calcula mediante reacciones extremas, observables como límites al acercar ejes a los apoyos.
-- No usar esta versión como fundamento único de un proyecto ejecutivo sin validación independiente por un ingeniero responsable.
+## Pruebas
 
-## Archivos
+`npm test` — 13 pruebas unitarias de conversión, geometría, equilibrio, cola móvil y búsqueda crítica.
 
-- `public/index.html` interfaz
-- `public/style.css` tema visual
-- `public/engine.js` motor estructural en JS aislado
-- `public/app.js` visualización, controles y exportación
-- `public/sw.js` / `manifest.webmanifest` PWA
-- `tests/engine.test.mjs` pruebas de motor
-- `render.yaml` configuración de sitio estático Render
+## Render
+
+Repositorio GitHub conectado. Direct build: `echo "static ready"`; ruta de publicación: `public`; rama: `main`; autoDeploy activado.
