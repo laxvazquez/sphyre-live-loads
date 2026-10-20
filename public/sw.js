@@ -1,4 +1,4 @@
-const CACHE='sphyre-live-loads-1.0.1';
+const CACHE='sphyre-live-loads-1.1.0';
 const ASSETS=['./','./index.html','./style.css','./app.js','./engine.js','./icons/sphyre.svg','./icons/sphyre-192.png','./icons/sphyre-512.png','./manifest.webmanifest'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)));self.skipWaiting()});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim()});
